@@ -1,0 +1,307 @@
+\documentclass[12pt]{article}
+
+\usepackage{url}
+\usepackage{filemod}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{color}
+\usepackage{listings}
+\lstset{%
+language=C++,                % choose the language of the code
+basicstyle=\footnotesize,       % the size of the fonts that are used for the code
+numbers=left,                   % where to put the line-numbers
+numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
+stepnumber=1,                   % the step between two line-numbers. If it is 1 each line will be numbered
+numbersep=5pt,                  % how far the line-numbers are from the code
+backgroundcolor=\color{white},  % choose the background color. You must add \usepackage{color}
+showspaces=false,               % show spaces adding particular underscores
+showstringspaces=false,         % underline spaces within strings
+showtabs=false,                 % show tabs within strings adding particular underscores
+frame=single,           % adds a frame around the code
+tabsize=2,          % sets default tabsize to 2 spaces
+captionpos=b,           % sets the caption-position to bottom
+breaklines=true,        % sets automatic line breaking
+breakatwhitespace=false,    % sets if automatic breaks should only happen at whitespace
+} 
+
+\begin{document}
+\title{Unik - Engineers Programmier-Styleguide}% chktex 8
+\author{Kevin Kappelmann}
+
+\maketitle
+
+\section*{Bemerkung}
+Dieses Dokument ist work in progress. Die Regeln sollen mit Rücksprache des Engineering-Teams fix festgelegt werden und werden vor allem im frühen Stadium des Projektes laufend erweitert.
+
+\tableofcontents
+\newpage
+
+\section{Vorwort}
+Dieser Styleguide stellt wichtige Regeln für die Entwicklung des C++-Quellcodes für das Spieleprojekt zusammen. Alle Punkte dieses Styleguides müssen bei jeder Datei vor dem Upload in das git-Repository erfüllt sein. Ziel des Styleguides ist es eine konsistente, standardisierte und vor allem sehr gut wartbare Codebasis zu garantieren, weshalb es wichtig ist, dass sich wirklich jeder an diese hier festgehaltenen Regeln hält.\\
+Mir ist klar, dass bei einigen Punkten (vor allem Formatierungsregeln) unterschiedliche Präferenzen bestehen, allerdings ist es wichtig, einen einheitlichen Style durchzuziehen, um Konsistenz zu garantieren und das Merging von Dateien einfach zu ermöglichen.
+
+\section{Allgemeine Regeln}
+
+\subsection{Git-Commits}
+\begin{itemize}
+	\item Code, der commitet wird, muss kompilierbar sein (Testen!).
+	\item Commits sollen in kleinen Stücken und häufig geschehen. Ebenfalls soll jeder Commit für sich eine geschlossene Einheit darstellen. Commits à la ``Added new ghost, added path finding algorithm, fixed 1000 bugs, cleaned up code and did some more magic.'' sind zu vermeiden.
+	\item Commit-Nachrichten sind auf Englisch und beschreibend zu verfassen.
+	\item Nach den Commits pushen nicht vergessen!
+\end{itemize}
+
+
+\subsection{Dateiendungen}
+\begin{itemize}
+	\item.cpp für C++-Implementierungs-Dateien
+	\item.hpp für C++-Header-Dateien
+	\item.tpp für C++-Template-Implementierungen
+\end{itemize}
+
+\subsection{Include-Guards}
+Es werden ausschließlich ifndef, define, endif und keine pragma once Include-Guards verwendet.
+Pragma once wird zwar von fast jedem Compiler unterstützt, es ist aber kein offizieller Standard und um Konsistenz zu bewahren, wird daher strikt ifndef, define, endif verwendet.\\
+Die Include-Guards haben der folgenden Namenskonvention zu folgen:\\
+PROJECTNAME\_SUBDIRECTORY1\_SUBSUBDIRECTORY2\_NAMEOFFILE\_HPP\_\\
+Beispiel:
+\begin{lstlisting}
+#ifndef HORRORGAME_ENEMIES_GHOSTS_ONEARMEDGHOST_HPP_
+#define HORRORGAME_ENEMIES_GHOSTS_ONEARMEDGHOST_HPP_
+//code in hpp file
+#endif
+\end{lstlisting}
+
+\subsection{Namenskonventionen}
+\begin{itemize}
+	\item Dateien und Klassen starten mit einem Groß-, Funktionen und Variablen mit einem Kleinbuchstaben. Dabei wird immer CamelCase (\url{https://en.wikipedia.org/wiki/CamelCase}) verwendet.\\
+Ausnahmen stellen Konstanten und Enums dar. Diese bestehen nur aus Großbuchstaben und Unterstrichen an Stelle von CamelCase.
+\begin{lstlisting}
+std::string playerName; //richtig
+std::string PlayerName; //falsch
+std::string player_name; //falsch
+
+constexpr double SUPER_AWESOME_CONSTANT = 2502.1994; //richtig
+constexpr double superAwesomeConstant = 2502.1994; //falsch
+\end{lstlisting}
+	\item Namespaces bestehen aus ausschließlich Kleinbuchstaben.
+\begin{lstlisting}
+namespace enemyutils{//code} //richtig
+namespace enemyUtils{//code} //falsch
+\end{lstlisting}
+	\item Abkürzungen und Akronyme (z.B. HTML oder DVD) bestehen nicht aus nur Großbuchstaben bei der Verwendung in einem Namen.
+\begin{lstlisting}
+std::string outputHtmlAddress; //richtig
+std::string outputHTMLAddress; //falsch
+\end{lstlisting}
+\end{itemize}
+
+\subsection{Code-Dokumentierung}
+\begin{itemize}
+	\item Dokumentiert eure Dateien (siehe weiter unten), Klassen, Funktionen und Variablen sinnvoll, beschreibend und klar.
+	\item Es wird ausschließlich in Englisch dokumentiert.
+	\item Funktionen, Klassenvariablen und ähnliches werden in der Header-Datei, in welcher sie definiert werden, dokumentiert.
+	\item Alle Dokumentationen müssen dem JavaDoc-Style folgen (\url{https://en.wikipedia.org/wiki/Javadoc}).
+	\item Jede neue Datei muss einen führenden Kommentar beinhalten, der folgendem Style folgt: (Anm.: Die Lizenz steht noch nicht fest, seht den Text hier als Beispiel)
+\begin{lstlisting}
+/**
+ * @file ghostEnemy.hpp
+ * Header file which contains the definitions for the ghost enemy.
+ * @author Kevin Kappelmann
+ * @license gnu general public license version 3
+ * @version 0.1
+ * @date 2015-04-04
+*/
+\end{lstlisting}
+bzw.
+\begin{lstlisting}
+/**
+ * @file ghostEnemy.cpp
+ * Implementation of the functions definied in ghostEnemy.hpp
+ * @author Kevin Kappelmann
+ * @license gnu general public license version 3
+ * @version 0.1
+ * @date 2015-04-04
+*/
+\end{lstlisting}
+bzw.
+\begin{lstlisting}
+/**
+ * @file ghostEnemy.tpp
+ * Implementation of the template functions defined in ghostEnemy.hpp 
+ * @author Kevin Kappelmann
+ * @license gnu general public license version 3
+ * @version 0.1
+ * @date 2015-04-04
+*/
+\end{lstlisting}
+Wenn jemand einen größeren Part einer existierenden Datei ändert, so soll die Versionsnummer erhöht und der Modifizierer zusätzlich als Autor vermerkt werden.\\
+Bei kleineren Veränderungen/Fixes soll die Versionsnummer um eine Nachkommastelle, bei großen, tiefgreifenden Änderungen die führende Versionsziffer erhöht werden.
+\end{itemize}
+
+\subsection{Code-Formatierung}
+\begin{itemize}
+	\item Jede C++-Datei wird mit Allman-Style (\url{https://en.wikipedia.org/wiki/Indent_style#Allman_style}) formatiert. Beim Allman-Style werden geschweifte Klammern, die einen neuen Scope definieren, in eine neue Zeile geschrieben. Ausgenommen hiervon sind leere Scopes und List-Initialisierungen.
+	\item Ausdrücke, bei denen die Reihenfolge der Ausführung nicht klar ersichtlich ist, sind zusätzlich zu klammern.\\
+Beispiel:
+\begin{lstlisting}
+//someVal will hold 3.0
+double someVal = 3/2+2*3-7?2.0:3.0; //schlecht
+double someVal = (3/2+2*3-7)?2.0:3.0; //besser
+\end{lstlisting}
+ 
+	\item Es wird mit Tabs und nicht mit Whitespaces eingerückt.
+\end{itemize}
+Beispiel für ein Header-File: 
+\begin{lstlisting}
+/**
+ * @file CountingSort.hpp
+ * Header file for the counting sort algorithm.
+ * The counting sort algorithm is a relatively fast sorting algorithm.
+ * However, in order to use the counting sort algorithm
+ * one needs to know the range of values which can appear in 
+ * the vector which should be sorted (lower and upper limit).
+ * The counting sort algorithm performs in O(n+(upperLimit-lowerLimit) 
+ * best, average and worst-case.
+ * Depending on the implementation, the counting sort algorithm 
+ * can either be stable or unstable.
+ * The counting sort algorithm has a space complexity of 
+ * O(n+(upperLimit-lowerLimit)).
+ * @author Kevin Kappelmann | kappelmann.me | github.com/kappelmann
+ * @license GNU General Public License Version 3
+ * @version 0.2
+ * @date 2015-03-26
+ */
+#ifndef ALGORITHMS_SORTING_COUNTINGSORT_COUNTINGSORT_HPP_
+#define ALGORITHMS_SORTING_COUNTINGSORT_COUNTINGSORT_HPP_
+
+#include "../SortingAlgorithm.hpp"
+
+class CountingSort final : public SortingAlgorithm<int>
+{
+	public:
+		/**
+		 * @param vector the vector which should be sorted.
+		 * @param lowerLimit the lowest value which can 
+		 * 	possibly appear in the vector.
+		 * @param upperLimit the highest value which can 
+		 *	possibly appear in the vector. 
+		 */
+		CountingSort(std::vector<int> & vector, int const lowerLimit, int const upperLimit);
+		using SortingAlgorithm<int>::sort;
+		/**
+		 * Sorts the passed vector of the given size which can hold 
+		 * values between the passed upper and lower limit.
+		 *
+		 * @param vector the vector which should be sorted.
+		 * @param lowerLimit the lowest value which can 
+		 *	possibly appear in the vector.
+		 * @param upperLimit the highest value which can 
+		 * 	possibly appear in the vector. 
+		 */
+		static void sort(std::vector<int> & vector, int lowerLimit, int upperLimit);
+	protected:
+		/**
+		 * @copydoc SortingTest#run()
+		 */
+		void run();
+	private:
+		int const lowerLimit;
+		int const upperLimit;
+};
+#endif
+\end{lstlisting}
+Und dazugehöriges Cpp-File:
+\begin{lstlisting}
+
+/**
+ * @file CountingSort.cpp
+ * Implementation of the functions defined in CountingSort.hpp. 
+ * This implementation produces an unstable sort.
+ * @author Kevin Kappelmann | kappelmann.me | github.com/kappelmann
+ * @license GNU General Public License Version 3
+ * @version 0.2
+ * @date 2015-03-26
+ */
+
+#include "CountingSort.hpp"
+#include <vector>
+
+CountingSort::CountingSort(std::vector<int> & vector, int const lowerLimit, int const upperLimit):SortingAlgorithm<int>(vector, new std::string("counting sort")),lowerLimit(lowerLimit),upperLimit(upperLimit) {}
+
+void CountingSort::run()
+{
+	CountingSort::sort(this->vector, this->lowerLimit, this->upperLimit);
+}
+
+void CountingSort::sort(std::vector<int> & vector, int lowerLimit, int upperLimit)
+{
+	//create the vector which counts the occurence of each value
+	auto countSize = upperLimit-lowerLimit+1;
+	std::vector<unsigned int> * count = new std::vector<unsigned int>(countSize);
+	std::fill(count->begin(), count->end(), 0);
+	for(auto & element : vector)
+	{
+		//count the occurence of each value in the passed vector.
+		++((*count)[element-lowerLimit]);
+	}
+	decltype(vector.size()) curIndex = 0;
+	for(decltype(vector.size()) i=0; curIndex<vector.size(); ++i)
+	{
+		for(unsigned int j = 0; j<(*count)[i]; ++j)
+		{
+			/*each time we counted an occurence of the current value,
+			  we create an entry for the current value in the sorted vector.*/
+			vector[curIndex++]=i+lowerLimit;
+		}
+	}
+	delete count;
+}
+\end{lstlisting}
+
+
+
+\subsection{Arrays und Strings}
+C-Style Arrays - das sind Arrays der Form ``T array[]'' - sollen nie verwendet werden. Stattdessen soll der von Unreal gegebenen dynamische Arraytyp TArray, der sich analog zu std::vector verhält, verwendet werden.\\
+C-Style Arrays sind wohl einer der häufigsten Fehlerquellen und bieten fast nie einen Performancegewinn.
+Aus diesem Grund sollen auch Strings nicht in Form von char-Arrays, sondern String-Klassen von Unreal benützt werden.
+
+\subsection{Using-Direktiven}
+Using-Direktiven sollten nie in Header-Files verwendet werden, da ansonsten alle Files, die dieses Header-File inkludieren, plötzlich auch den angegebenen Namespace bzw. Member inkludieren und es dazu schnell zu Namenskonflikten kommen kann.
+Des Weiteren sollten ganze Namespaces, vor allem externe Namespaces, nicht komplett inkludiert werden.
+\begin{lstlisting}
+using namespace std; //Schlecht! ganzer Namespace wird inkludiert.
+int main()
+{
+	foo();
+	cout << "Nur ein Test" << endl:
+	return 0;
+}
+
+void foo(){//code that does not use cout}
+\end{lstlisting}
+\begin{lstlisting}
+int main()
+{
+	foo();
+	/* 
+	 * Besser! 1. Nur der verwendete cout Member wird inkludiert und
+	 * 2. der Scope der Using-Direktive wird auf den folgenden Teil 
+	 * der main-Methode begrenzt.
+	 */
+	using std::cout; 
+	cout << "Nur ein Test" << endl:
+	return 0;
+}
+
+void foo(){//code that does not use cout}
+
+\end{lstlisting}
+
+\section{Spezifische Regeln}
+Hier werden evtl.\ zusätzliche, für einen bestimmten Codebereich spezifische Regeln eingefügt.\\
+\\
+\begin{center}
+\emph{Last modified: \filemodprintdate{\jobname}}
+\end{center}
+\end{document}
