@@ -1,3 +1,0 @@
-git clone git@github.com:project-unik/horror-survival.git
-bzw.
-git clone https://github.com/project-unik/horror-survival.git
